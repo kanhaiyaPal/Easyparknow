@@ -53,11 +53,13 @@ if((!isset($_SESSION['adminlogged']))|| ($_SESSION['adminlogged'] == ''))
                 	<?php if(($_SESSION['adminlogged']['user_type']) == '3'):  //master admin menu ?>
 
                 		<li class="current"><a href="#"><i class="glyphicon glyphicon-home"></i> Dashboard</a></li>
-	                  <li class="submenu <?=get_menu_status_admin(array('contractor_new','contractor_list'))?>" >
-							        <a href="index.php?page=contractor_list"><i class="glyphicon glyphicon-calendar"></i> Contractors</a>
+	                  <li class="submenu <?=get_menu_status_admin(array('contractor_new','contractor_list','mange_town','manage_location'))?>" >
+							        <a href="index.php?page=contractor_list"><i class="glyphicon glyphicon-calendar"></i> Parkings</a>
         							<ul>
-                          <li><a href="index.php?page=contractor_list">List Contractor</a></li>
-                          <li><a href="index.php?page=contractor_new">Add New Contractor</a></li>
+                          <li><a href="index.php?page=mange_town">Towns</a></li>
+                          <li><a href="index.php?page=manage_location">Locations</a></li>
+                          <li><a href="index.php?page=contractor_list">List Parkings</a></li>
+                          <li><a href="index.php?page=contractor_new">Add New Parking</a></li>
         							</ul>
         						</li>
                     <li><a href="index.php?page=parkingslot_list"><i class="glyphicon glyphicon-stats"></i> Statistics (Charts)</a></li>

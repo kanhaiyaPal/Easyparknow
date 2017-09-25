@@ -23,12 +23,6 @@
 						   	"user_type" => '2'
 					);
 			$id = $db_handler->insert ('users', $data);
-
-			$data_town = Array (
-							"user_id" => $id,
-						   	"town_name" => $_POST['contra_town'],
-					);
-			$db_handler->insert ('contractors_to_town', $data_town);
 		}else{
 			echo 'Unable to verify security token.Please try again';
 			unset($_POST);
@@ -47,19 +41,26 @@
 		<fieldset>
 			<div class="form-group">
 				<label>Town</label>
-				<select>
+				<select name="contra_town">
 					
 				</select>
 			</div>
 			<div class="form-group">
 				<label>Location</label>
-				<select>
+				<select name="contra_location">
 					
 				</select>
 			</div>
 			<div class="form-group">
 				<label>Name of Parking</label>
 				<input class="form-control" name="contra_name" type="text" required>
+			</div>
+			<div class="form-group" id="size_parking">
+				<label>Number of Parking Slots</label>
+				<input class="form-control" name="contra_size" type="text" required>
+			</div>
+			<div class="form-group" id="slots_parking">
+				<label>Label each parking slot</label>
 			</div>
 			<div class="form-group">
 				<label>E-mail( This will be username to login)</label>
