@@ -261,5 +261,11 @@ function get_town_by_locationid($sql_con,$parent_id = 0)
 	$town = $sql_con->getOne('tbl_town_location');
 	return $town['id'];
 }
+function get_all_parking_data($sql_con)
+{
+	$sql_con->where ("user_type",'2');
+	$parkings = $sql_con->get('users');
+	return $parkings;
+}
 /**Location and Town Functions Ends **/
 ?>

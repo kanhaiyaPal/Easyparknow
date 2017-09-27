@@ -126,6 +126,12 @@ if((!isset($_SESSION['adminlogged']))|| ($_SESSION['adminlogged'] == ''))
   <?php if(isset($require_locationtarrif_script) && ($require_locationtarrif_script)): ?>
   <script src="<?=ROOTPATH?>/js/location_tarrif.js"></script>
   <?php endif; ?>
+
+  <?php if(isset($require_generate_reports_js) && ($require_generate_reports_js)): ?>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC1/js/bootstrap-datepicker.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC1/css/bootstrap-datepicker.css" rel="stylesheet" />
+  <script src="<?=ROOTPATH?>/js/generate_reports.js"></script>
+  <?php endif; ?>
   
   <script src="<?=ROOTPATH?>/js/custom.js"></script>
   <script src="<?=ROOTPATH?>/js/tables.js"></script>

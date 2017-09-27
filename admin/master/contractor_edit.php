@@ -66,10 +66,9 @@
 			}
 
  			$park_data = Array (
-					"price" => $_POST['contra_amount'],
-				   	"denomination" => $_POST['contra_currency'],
 				   	"location_id" => $_POST['contra_location']
 			);
+
 			$db_contractor_edit->where('user_id', (int)$_POST['user_id']);
 			$db_contractor_edit->update('tbl_parking_data', $park_data);
 
@@ -147,7 +146,7 @@
 					<div class="col-md-3">
 						<input type="text" name="existparkingslotsname[]" class="form-control" value="<?=$slot['name']?>" required />
 						<input type="hidden" name="existparkingslotsid[]" value="<?=$slot['id']?>" />
-						<?php if(check_active_transaction($db_contractor_edit,'parking_slot_id',$slot['id'])): ?>
+						<?php if(check_active_transaction($db_contractor_edit,'parking_slot_no',$slot['name'])): ?>
 							<a href="javascript:void(0)" onclick="$(this).parent('div').remove()">Remove</a>
 						<?php endif; ?>
 					</div>
@@ -157,28 +156,11 @@
 			<div class="form-group" id="size_parking" >
 				<label>Number of Parking Slots</label>
 				<div class="row">
-					<div class="col-md-10"><input class="form-control" name="contra_size" type="text" required></div>
+					<div class="col-md-10"><input class="form-control" name="contra_size" type="text" ></div>
 					<div class="col-md-2"><input type="button" class="btn btn-default" name="bt_generate_slots" value="Generate Slots" /></div>
 				</div>				 
 			</div>
 			<div class="form-group" id="slots_parking" >
-			</div>
-			<div class="form-group">
-				<label>Parking Tarrif(Amount)</label>
-				<div class="row">
-					<div class="col-md-8">
-						<div class="input-group">
-							<input class="form-control" name="contra_amount" type="text" value="<?=$parking_data['price']?>" required><span class="input-group-addon">per minute</span>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<select class="form-control" name="contra_currency" required>
-							<option value="dollar" <?php if($parking_data['denomination'] == 'dollar'){ echo "selected"; } ?> >Dollar</option>
-							<option value="cent" <?php if($parking_data['denomination'] == 'cent'){ echo "selected"; } ?>>Cent</option>
-						</select>
-					</div>
-				</div>	
-				
 			</div>
 			<div class="form-group">
 				<label>E-mail( This will be username to login)</label>

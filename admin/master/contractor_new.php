@@ -50,8 +50,6 @@ generate_alerts_admin_pages($_REQUEST['msg']);
 
 				$data = Array (
 						"user_id" => $id ,
-						"price" => $_POST['contra_amount'],
-					   	"denomination" => $_POST['contra_currency'],
 					   	"location_id" => $_POST['contra_location']
 				);
 				$db_handler->insert ('tbl_parking_data', $data);
@@ -110,23 +108,6 @@ generate_alerts_admin_pages($_REQUEST['msg']);
 				</div>				 
 			</div>
 			<div class="form-group" id="slots_parking">
-			</div>
-			<div class="form-group">
-				<label>Parking Tarrif(Amount)</label>
-				<div class="row">
-					<div class="col-md-8">
-						<div class="input-group">
-							<input class="form-control" name="contra_amount" type="text" required><span class="input-group-addon">per minute</span>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<select class="form-control" name="contra_currency" required>
-							<option value="dollar">Dollar</option>
-							<option value="cent">Cent</option>
-						</select>
-					</div>
-				</div>	
-				
 			</div>
 			<div class="form-group">
 				<label>E-mail( This will be username to login)</label>

@@ -44,7 +44,7 @@ if(is_ajax_call()){
 					$slots_html = '';
 					$slots_html .= '<div class="row"><div class="col-md-12"><label>Provide timings in each cell</label></div>';
 					for ($i=0;$i<(int)$_POST['slots'];$i++) {
-						$slots_html .= '<div class="col-md-3"><input type="text" name="timingsSlots[]" placeholder="'.($i+1).'" class="form-control" required /></div>';
+						$slots_html .= '<div class="col-md-2"><input type="text" name="timingsSlots[]" placeholder="Slot Timing" class="form-control" required /></div><div class="col-md-3"><input type="text" name="townShare[]" placeholder="Town Share" class="form-control" required /></div><div class="col-md-2"><select name="townShareCurr[]" class="form-control" required><option value="dollar">Dollar</option><option value="cent">Cent</option></select></div><div class="col-md-3"><input type="text" name="adminShare[]" placeholder="Admin Share" class="form-control" required /></div><div class="col-md-2"><select name="adminShareCurr[]" class="form-control" required><option value="dollar">Dollar</option><option value="cent">Cent</option></select></div><div class="col-md-12"><hr/></div>';
 					}
 					$slots_html .= '<div class="col-md-12"><hr/></div><div class="col-md-12"><input type="button" class="btn btn-default" name="bt_regenerate_slots" value="Re-Generate Cells" onclick="$(\'div#slots_parking\').html(\'\'); $(\'div#size_parking\').show(); return false;" /></div></div>';
 					exit($slots_html);
