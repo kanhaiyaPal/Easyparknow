@@ -14,10 +14,16 @@ if(isset($_POST['csrf_protect_token']) && ($_POST['csrf_protect_token'] == $_SES
 		if($user['id']){
 			if(verify_pass($_POST['upass'],$user['password'])){
 				unset($_SESSION['adminlogged']);
+
+				$admin_permissions = '';
+				if($user['user_type'] == '2'){ $admin_permissions = generate_subadmin_permissions(); }
+				if($user['user_type'] == '3'){ $admin_permissions = generate_admin_permissions(); }
+				
 				$_SESSION['adminlogged'] = array(
 						'email' => $user['email'],
 						'username' => $user['username'],
-						'user_type' => $user['user_type']
+						'user_type' => $user['user_type'],
+						'permission' => $admin_permissions
 					);
 				header("Location:index.php");
 				exit();

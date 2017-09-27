@@ -153,8 +153,113 @@ function get_menu_status_admin($listings = array()){
 	return $status;
 }
 
+function generate_alerts_admin_pages($msg = '')
+{
+	$msg = $_REQUEST['msg'];
+	switch ($msg) {
+		case 'add':
+			echo '<div class="alert alert-success">Data Added Successfully</div>';
+			break;
+		case 'edit':
+			echo '<div class="alert alert-info">Data Updated Successfully</div>';
+			break;
+		case 'delete':
+			echo '<div class="alert alert-danger">Data Deleted Successfully</div>';
+			break;
+		default:
+			echo '<div class="alert alert-danger">'.htmlspecialchars($msg).'</div>';
+			break;
+	}
+}
 
-/**Contractor Functions**/
+function is_ajax_call(){
+	$return = FALSE;
+	if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+		$return = TRUE;
+	}
+	return $return;
+}
 
-/**Contractor Functions Ends **/
+function generate_subadmin_permissions()
+{
+  //add newly created pages to this array
+	$p_arry = array(
+		'usage_parking_history',
+		'usage_generate_reports'
+	);
+	return implode('|', $p_arry);
+}
+
+function generate_admin_permissions()
+{
+	//add newly created pages to this array
+	$p_arry = array(
+		'contractor_list',
+		'contractor_new',
+		'contractor_edit',
+		'manage_location',
+		'manage_town',
+		'usage_parking_history',
+		'usage_generate_reports'
+	);
+	return implode('|', $p_arry);
+}
+
+function check_permission_to_access()
+{
+	$page ='';
+	if(isset($_REQUEST['page']) && ($_REQUEST['page']!=''))
+	{
+		$page = $_REQUEST['page'];
+	}
+	if((!isset($_SESSION['adminlogged']))|| ($_SESSION['adminlogged'] == ''))
+	{
+		exit('Permission Denied!');
+	}else{
+		$permissions = explode('|', $_SESSION['adminlogged']['permission']);
+		$permitted = FALSE;
+		foreach ($permissions as $key => $value) {
+			if($value == $page){
+				$permitted = TRUE;
+				break;
+			}else{
+				$permitted = FALSE;
+			}
+		}
+
+		if(!$permitted){
+			exit('Permission Denied!');
+		}
+	}
+}
+
+function check_active_transaction($sql_con,$field,$value)
+{
+	$sql_con->where ($field,$value);
+	$transactions = $sql_con->get('tbl_transactions');
+	if($sql_con->count > 0){
+		return FALSE;
+	}
+	return true;
+}
+
+/**Location and Town Functions**/
+function get_all_town($sql_con)
+{
+	$sql_con->where ("parent",'0');
+	$towns = $sql_con->get('tbl_town_location');
+	return $towns;
+}
+function get_location_of_town($sql_con,$town_id = 0){
+	$sql_con->where ("parent",$town_id);
+	$towns = $sql_con->get('tbl_town_location');
+	return $towns;
+}
+function get_town_by_locationid($sql_con,$parent_id = 0)
+{
+	$sql_con->where ("id",$parent_id);
+	$town = $sql_con->getOne('tbl_town_location');
+	return $town['id'];
+}
+/**Location and Town Functions Ends **/
 ?>

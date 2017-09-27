@@ -1,4 +1,5 @@
 $(document).ready(function() {
         $('#contractor_table').dataTable();
-		$('#example2').dataTable();
+		$('#town_table').dataTable();
+		$('#location_table').dataTable();
 } );
