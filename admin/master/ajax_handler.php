@@ -30,7 +30,7 @@ if(is_ajax_call()){
 					$slots_html = '';
 					$slots_html .= '<div class="row"><div class="col-md-12"><label>Assign Number to each slot</label></div>';
 					for ($i=0;$i<(int)$_POST['slots'];$i++) {
-						$slots_html .= '<div class="col-md-3"><input type="text" name="parkingslots[]" placeholder="'.($i+1).'" class="form-control" required /></div>';
+						$slots_html .= '<div class="col-md-3"><input type="text" id="slot'.($i+1).'" name="parkingslots[]" onblur="slotexist(this.value,this.id)" placeholder="'.($i+1).'" class="form-control" required /></div>';
 					}
 					$slots_html .= '<div class="col-md-12"><hr/></div><div class="col-md-12"><input type="button" class="btn btn-default" name="bt_regenerate_slots" value="Re-Generate Slots" onclick="$(\'div#slots_parking\').html(\'\'); $(\'div#size_parking\').show(); return false;" /></div></div>';
 					exit($slots_html);
@@ -50,6 +50,24 @@ if(is_ajax_call()){
 					exit($slots_html);
 				}
 			break;
+			case 'slotexist':
+			//echo $_POST['slots_no'].'testing';
+			//die;
+			
+			$get_slotname_arr = get_slotname($ajax_handler,$_POST['slots_no']);
+		        
+					if(count($get_slotname_arr) > 0){
+					    echo  'Slot Name already Exists';
+					}else{
+					return true;
+					}
+					
+			
+			break;
+			
+			
+			
+			
 		}
 	}else{
 		exit('Access Denied');

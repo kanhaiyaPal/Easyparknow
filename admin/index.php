@@ -29,14 +29,17 @@ if((!isset($_SESSION['adminlogged']))|| ($_SESSION['adminlogged'] == ''))
   	<div class="header">
 	     <div class="container">
 	        <div class="row">
-	           <div class="col-md-10">
+	           <div class="col-md-9">
 	              <!-- Logo -->
 	              <div class="logo">
 	                 <h1><a href="index.php">Admin Panel</a></h1>
 	              </div>
 	           </div>
-	           <div class="col-md-2" style="padding:15px">
-				  <form action="login.php" method="post"><input type="hidden" name="csrf_protect_token" value="<?php echo $_SESSION['crsf_protect_token']; ?>" /><input type="submit" name="admin_logout" value="Logout"/></form>
+	           <div class="col-md-3" style="padding-top:10px">
+              <a href="index.php?page=dashboard" class="btn btn-info">Change Password </a>
+				      <form action="login.php" method="post" style="display: inline">
+                <input type="hidden" name="csrf_protect_token" value="<?php echo $_SESSION['crsf_protect_token']; ?>" /><input type="submit" class="btn btn-info" name="admin_logout" value="Logout"/>
+              </form>
 	           </div>
 	        </div>
 	     </div>
@@ -49,18 +52,28 @@ if((!isset($_SESSION['adminlogged']))|| ($_SESSION['adminlogged'] == ''))
                 <ul class="nav">
                 	<?php if(($_SESSION['adminlogged']['user_type']) == '2'):  //subadmin menu ?>
 
+                    <li class="current"><a href="index.php?page=dashboard"><i class="glyphicon glyphicon-home"></i> Dashboard</a></li>
+                    <li class="submenu <?=get_menu_status_admin(array('usage_parking_history','usage_generate_reports'))?>">
+                      <a href="#"><i class="glyphicon glyphicon-stats"></i> Usage Statistics</a>
+                      <ul>
+                          <li><a href="index.php?page=usage_parking_history&contractor=<?=$_SESSION['adminlogged']['id']?>">User Parking History - Past parkings</a></li>
+                          <li><a href="index.php?page=usage_parking_history&contractor=<?=$_SESSION['adminlogged']['id']?>&active=1">User Parking History - Active parkings</a></li>
+                          <li><a href="index.php?page=usage_generate_reports">Generate Reports</a></li>
+                      </ul>                      
+                    </li>
+
                 	<?php endif; ?>
                 	<?php if(($_SESSION['adminlogged']['user_type']) == '3'):  //master admin menu ?>
 
-                		<li class="current"><a href="#"><i class="glyphicon glyphicon-home"></i> Dashboard</a></li>
+                		<li class="current"><a href="index.php?page=dashboard"><i class="glyphicon glyphicon-home"></i> Dashboard</a></li>
 	                  <li class="submenu <?=get_menu_status_admin(array('contractor_new','contractor_list','contractor_edit','manage_town','manage_location'))?>" >
 							        <a href="#"><i class="glyphicon glyphicon-calendar"></i> Parkings</a>
         							<ul>
                           <li><a href="index.php?page=manage_town">Towns</a></li>
                           <li><a href="index.php?page=manage_location">Locations</a></li>
-                          <li><a href="index.php?page=contractor_list">List Parkings</a></li>
                           <li><a href="index.php?page=contractor_new">Add New Parking</a></li>
-        							</ul>
+                          <li><a href="index.php?page=contractor_list">List Parkings</a></li>
+                      </ul>
         						</li>
                     <li class="submenu <?=get_menu_status_admin(array('usage_parking_history','usage_generate_reports'))?>">
                       <a href="#"><i class="glyphicon glyphicon-stats"></i> Usage Statistics</a>
@@ -69,7 +82,9 @@ if((!isset($_SESSION['adminlogged']))|| ($_SESSION['adminlogged'] == ''))
                           <li><a href="index.php?page=usage_generate_reports">Generate Reports</a></li>
                       </ul>                      
                     </li>
+                    <li><a href="index.php?page=users_list"><i class="glyphicon glyphicon-user"></i> Users</a></li>
 	                <?php endif; ?>
+
                 </ul>
              </div>
 		  </div>
@@ -131,6 +146,33 @@ if((!isset($_SESSION['adminlogged']))|| ($_SESSION['adminlogged'] == ''))
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC1/js/bootstrap-datepicker.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC1/css/bootstrap-datepicker.css" rel="stylesheet" />
   <script src="<?=ROOTPATH?>/js/generate_reports.js"></script>
+  <?php if(isset($_POST['town']) && ($_POST['town']!='')){ ?>
+  <script>
+  $(document).ready(function(){ 
+     $("select[name='town']").val('<?=$_POST['town']?>');
+  });
+  </script>
+  <?php }?>
+  <?php if(isset($_POST['location']) && ($_POST['location']!='')){ ?>
+  <script>
+  $(document).ready(function(){ 
+    var rootpath = $("input[name='rootpath_val']").val();
+    var dataString = "town_id="+<?=$_POST['town']?>+"&function=getlocationnames_by_townid"; 
+
+    $.ajax({ 
+      type: "POST", 
+      url: rootpath+"/master/ajax_handler.php", 
+      data: dataString, 
+      success: function(result){
+        result += '<option value="" selected>Select Location</option>';
+        $("select[name='location']").html(result); 
+        $("select[name='location']").val('<?=$_POST['location']?>');
+      }
+    });
+        
+  });
+  </script>
+  <?php }?>
   <?php endif; ?>
   
   <script src="<?=ROOTPATH?>/js/custom.js"></script>

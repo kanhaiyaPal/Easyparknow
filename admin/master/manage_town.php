@@ -81,6 +81,23 @@ $town_data = $db_town->getOne("tbl_town_location");
 			echo "No Existing Data to display";
 		}else{ 
 
+		$active_towns = array();
+		$db_town->where("parking_status",'0');
+		$active_parkings = $db_town->get("tbl_transactions",null,"DISTINCT parking_id as parkid");
+
+		foreach ($active_parkings as $parking) {
+			$db_town->where("user_id",$parking['parkid']);
+			$location_id = $db_town->getOne("tbl_parking_data");
+
+			$db_town->where("id",$location_id['location_id']);
+			$location_id_sc = $db_town->getOne("tbl_town_location");
+
+			$db_town->where("id",$location_id_sc['parent']);
+			$final_town = $db_town->getOne("tbl_town_location");
+
+			$active_towns[] = $final_town['id'];
+		}
+
 		$srcount = 1;
 ?>
 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="town_table">
@@ -98,7 +115,13 @@ $town_data = $db_town->getOne("tbl_town_location");
 			<td><?=$srcount?></td>
 			<td><?=$town['name']?></td>
 			<td><a href="index.php?page=manage_town&id=<?=$town['id']?>&action=edit"><span class="glyphicon glyphicon-pencil"></span></a></td>
-			<td><a href="index.php?page=manage_town&id=<?=$town['id']?>&action=delete"><span class="glyphicon glyphicon-trash"></span></a></td>
+			<td><a 
+			<?php if(in_array($town['id'],$active_towns)){ ?> 
+			href="#" onclick="alert('Town cannot be deleted right now'); return false;"
+			<?php }else{ ?> 
+			href="index.php?page=manage_town&id=<?=$town['id']?>&action=delete" onclick="return confirm('Are you sure you want to delete this data?')"
+			<?php } ?>
+			><span class="glyphicon glyphicon-trash"></span></a></td>
 		</tr>
 		<?php $srcount++; endforeach; ?>
 	</tbody>

@@ -53,5 +53,10 @@ $(document).ready(function(){
     $('div#slots_parking').html('');
     $('div#size_parking').show();   
   });
+  
+
 
 });
+
+ 
+

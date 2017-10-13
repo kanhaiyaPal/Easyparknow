@@ -50,14 +50,18 @@
 	}
 
 	if(isset($_POST['from_date']) && ($_POST['from_date'] != '')){
-		$db_generate_reports->where("str_to_date(start_date, '%d-%m-%Y') >= str_to_date('".$_POST['from_date']."', '%d-%m-%Y')");
+		$db_generate_reports->where("str_to_date(start_date, '%Y-%m-%d') >= str_to_date('".$_POST['from_date']."', '%d-%m-%Y')");
 	}
 
 	if(isset($_POST['to_date']) && ($_POST['to_date'] != '')){
-		$db_generate_reports->where("str_to_date(start_date, '%d-%m-%Y') <= str_to_date('".$_POST['to_date']."', '%d-%m-%Y')");
+		$db_generate_reports->where("str_to_date(start_date, '%Y-%m-%d') <= str_to_date('".$_POST['to_date']."', '%d-%m-%Y')");
 	}
 
-	$current_parkings = $db_generate_reports->get('tbl_transactions');
+	$db_generate_reports->where('parking_status','1');
+	$sql_parking_data = $db_generate_reports->get('tbl_transactions');
+
+	$current_parkings = generate_data_format_display($sql_parking_data,$db_generate_reports);
+
 
 	/*generate token for requests*/
 	$csrf_token = generate_token();
@@ -75,6 +79,38 @@
       <a href="<?=ROOTPATH?>/master/export_master_csv_data.php?token=<?=urlencode($csrf_token)?>" target="_blank"  style="font-size:20px" title="Export to CSV" ><i class="glyphicon glyphicon-share"></i></a>
     </div>
 </div>
+<div class="row">
+	<div class="col-md-12">
+    	<form action="" method="post" class="form-inline">
+			<fieldset>
+				<div class="form-group col-md-2">
+					<label>From Date</label>
+					<input type="text" name="from_date" class="datepicker_ar form-control" value="<?=$_POST['from_date']?>" required>
+				</div>
+				<div class="form-group col-md-2">
+					<label>To Date</label>
+					<input type="text" name="to_date" class="datepicker_dep form-control" value="<?=$_POST['to_date']?>" required>
+				</div>
+				<div class="form-group col-md-2">
+					<label>Parking Name</label>
+					<select name="parking_name" class="form-control" disabled="disabled" >
+						<?php foreach($parkings_dt as $park_dt): ?>
+							<?php if($park_dt['id'] == $_SESSION['adminlogged']['id']): ?>
+							<option selected="selected" value="<?=$park_dt['id']?>"><?=$park_dt['name']?></option>
+							<?php endif; ?>
+						<?php endforeach; ?>
+					</select>
+				</div>
+				<div class="col-md-2">
+					<label>&nbsp;</label>
+					<input type="hidden" value="<?=ROOTPATH?>" name="rootpath_val">
+					<input type="hidden" name="csrf_token" value="<?=$csrf_token?>">
+					<input type="submit" name="gen_report" value="Go" class="btn btn-block btn-primary">
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>
 <div class="panel-body">
 	<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="contractor_table">
 		<thead>
@@ -86,7 +122,8 @@
 				<th>Start Time</th>
 				<th>End Date</th>
 				<th>End Time</th>
-				<th>Amount Paid</th>
+				<th>Admin Share($)</th>
+				<th>Town Share($)</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -99,7 +136,8 @@
 				<td><?=$parking['start_time']?></td>
 				<td><?=$parking['end_date']?></td>
 				<td><?=$parking['end_time']?></td>
-				<td><?=$parking['payment_amount']?></td>
+				<td><?=$parking['admin_share']?></td>
+				<td><?=$parking['town_share']?></td>
 			</tr>
 			<?php $count_pr++; endforeach; ?>
 		</tbody>
@@ -129,26 +167,12 @@
 				<input type="text" name="to_date" class="datepicker_dep form-control" required>
 			</div>
 			<div class="form-group col-md-2">
-				<label>Town</label>
-				<select name="town" class="form-control">
-					<option value="" >Select Town</option>
-					<?php foreach ($towns_opt as $value) { ?>
-						<option value="<?=$value['id']?>" ><?=$value['name']?></option>
-					<?php }	?>
-				</select>
-			</div>
-			<div class="form-group col-md-2">
-				<label>Location</label>
-				<select name="location" class="form-control">
-					<option value="" >Select town first</option>
-				</select>
-			</div>
-			<div class="form-group col-md-2">
 				<label>Parking Name</label>
-				<select name="parking_name" class="form-control">
-					<option value="" >Select Parking</option>
+				<select name="parking_name" class="form-control" disabled="disabled" >
 					<?php foreach($parkings_dt as $park_dt): ?>
-						<option value="<?=$park_dt['id']?>"><?=$park_dt['name']?></option>
+						<?php if($park_dt['id'] == $_SESSION['adminlogged']['id']): ?>
+						<option selected="selected" value="<?=$park_dt['id']?>"><?=$park_dt['name']?></option>
+						<?php endif; ?>
 					<?php endforeach; ?>
 				</select>
 			</div>

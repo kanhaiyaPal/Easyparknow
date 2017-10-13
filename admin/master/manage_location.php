@@ -250,6 +250,17 @@ foreach ($location_parking_slots as $key => $value) {
 			echo "No Existing Data to display";
 		}else{ 
 
+		$active_locations = array();
+		$db_location->where("parking_status",'0');
+		$active_parkings = $db_location->get("tbl_transactions",null,"DISTINCT parking_id as parkid");
+
+		foreach ($active_parkings as $parking) {
+			$db_location->where("user_id",$parking['parkid']);
+			$location_id = $db_location->getOne("tbl_parking_data");
+
+			$active_locations[] = $location_id['location_id'];
+		}
+
 		$srcount = 1;
 ?>
 <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="location_table">
@@ -269,7 +280,13 @@ foreach ($location_parking_slots as $key => $value) {
 			<td><?=$location['parent_name']?></td>
 			<td><?=$location['name']?></td>
 			<td><a href="index.php?page=manage_location&id=<?=$location['id']?>&action=edit"><span class="glyphicon glyphicon-pencil"></span></a></td>
-			<td><a href="index.php?page=manage_location&id=<?=$location['id']?>&action=delete"><span class="glyphicon glyphicon-trash"></span></a></td>
+			<td><a
+			<?php if(in_array($location['id'],$active_locations)){ ?> 
+			href="#" onclick="alert('Location cannot be deleted right now'); return false;"
+			<?php }else{ ?> 
+			href="index.php?page=manage_location&id=<?=$location['id']?>&action=delete" onclick="return confirm('Are you sure you want to delete this data?');"
+			<?php } ?>
+			><span class="glyphicon glyphicon-trash"></span></a></td>
 		</tr>
 		<?php $srcount++; endforeach; ?>
 	</tbody>

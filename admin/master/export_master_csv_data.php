@@ -12,7 +12,8 @@ if(isset($_REQUEST['token']) && isset($_SESSION['csrf_token_contractor']) && (ur
 	$out .= 'Start Time,';
 	$out .= 'End Date,';
 	$out .= 'End Time,';
-	$out .= 'Amount Paid,';
+	$out .= 'Admin Share,';
+	$out .= 'Town Share,';
 	$out .="\n";
 
 	$count_pr = 1;
@@ -26,7 +27,8 @@ if(isset($_REQUEST['token']) && isset($_SESSION['csrf_token_contractor']) && (ur
 	$out .='"'.$parking['start_time'].'",';
 	$out .='"'.$parking['end_date'].'",';
 	$out .='"'.$parking['end_time'].'",';
-	$out .='"'.$parking['payment_amount'].'",';
+	$out .='"'.$parking['admin_share'].'",';
+	$out .='"'.$parking['town_share'].'",';
 	$out .="\n";
 	$count_pr++;
 

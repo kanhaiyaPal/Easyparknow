@@ -21,7 +21,27 @@ generate_alerts_admin_pages($_REQUEST['msg']);
 			$user = $db_handler->getOne("users");
 			if($user['id']){
 				echo 'Email Id already exist in database!';
+
+				$csrf_token = generate_token();
+				unset($_SESSION['csrf_token_contractor']);
+				$_SESSION['csrf_token_contractor'] = $csrf_token;
+				break;
 			}else{
+
+				if(!empty($_POST['parkingslots'])){
+					//check for multiple entries
+					$multiple_slot_check = array_count_values($_POST['parkingslots']);
+					foreach ($multiple_slot_check as $key => $value) {
+						if($value>1){
+							echo 'Slots Number Must be Unique!';
+
+							$csrf_token = generate_token();
+							unset($_SESSION['csrf_token_contractor']);
+							$_SESSION['csrf_token_contractor'] = $csrf_token;
+							break;
+						}
+					}
+				}
 				
 				$password_hash = hash_password($_POST['contra_pass']);
 
@@ -38,6 +58,7 @@ generate_alerts_admin_pages($_REQUEST['msg']);
 				//exit($db_handler->getLastQuery());
 
 				if(!empty($_POST['parkingslots'])){
+
 					foreach($_POST['parkingslots'] as $parking_slot){
 						$data = Array (
 								"name" => $parking_slot,
@@ -115,7 +136,10 @@ generate_alerts_admin_pages($_REQUEST['msg']);
 			</div>
 			<div class="form-group">
 				<label>Password</label>
-				<input class="form-control" name="contra_pass" type="text" value="" required>
+				<div class="row">
+				<div class="col-md-11"><input class="form-control" name="contra_pass" id="contra_pass" type="password" value="" required /></div>
+				<div class="col-md-1"><button class="btn btn-default" onclick="make_pass_visible(event)"><i class="glyphicon glyphicon-eye-open"></i></button></div>
+				</div>
 			</div>
 		</fieldset>
 		<div>
@@ -127,4 +151,46 @@ generate_alerts_admin_pages($_REQUEST['msg']);
 		</div>
 	</form>
 </div>
+<script>
+ function slotexist(value,id){
+	  var rootpath = $("input[name='rootpath_val']").val(); 
+	    if(value){
+      $.ajax({
+          type: "POST",
+          url: rootpath+"/master/ajax_handler.php", 
+          data: { 
+              slots_no: value, // < note use of 'this' here
+              function: "slotexist" 
+          },
+          success: function(result) {
+              if(result){
+				  alert("Slot Name already exists. Try other Slot Name");
+				  $('#'+id).val('');
+               return false;
+              }else{
+				  return true;
+				  }
+          },
+          error: function(result) {
+              alert('Error contacting server.Please try again');
+          }
+      });
+    }else{
+      return false;
+    }
+	
+}
+function make_pass_visible(e)
+{
+	e.preventDefault();
+	if($('#contra_pass').get(0).type == 'password'){
+		$('#contra_pass').get(0).type = 'text';
+	}else{
+		$('#contra_pass').get(0).type = 'password';
+	}
+
+	
+	return false;
+}
+</script>
 <?php $require_contractor_script = TRUE; ?>

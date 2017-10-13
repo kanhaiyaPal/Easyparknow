@@ -3,12 +3,12 @@ require_once('../library/initialize.php');
 
 if(isset($_POST['csrf_protect_token']) && ($_POST['csrf_protect_token'] == $_SESSION['crsf_protect_token'])){
 	
+	$db = new MysqliDb(DBHOST,DBUSER,DBPASS,DBNAME);
+
 	//login admin
 	if(isset($_POST['admin_login']) && ($_POST['admin_login']!= ''))
 	{
 
-		$db = new MysqliDb(DBHOST,DBUSER,DBPASS,DBNAME);
-		
 		$db->where ("username", $_POST['uname']);
 		$user = $db->getOne ("users");
 		if($user['id']){
@@ -20,6 +20,7 @@ if(isset($_POST['csrf_protect_token']) && ($_POST['csrf_protect_token'] == $_SES
 				if($user['user_type'] == '3'){ $admin_permissions = generate_admin_permissions(); }
 				
 				$_SESSION['adminlogged'] = array(
+						'id' => $user['id'],
 						'email' => $user['email'],
 						'username' => $user['username'],
 						'user_type' => $user['user_type'],
@@ -35,6 +36,30 @@ if(isset($_POST['csrf_protect_token']) && ($_POST['csrf_protect_token'] == $_SES
 	if(isset($_POST['admin_logout']) && ($_POST['admin_logout']!=''))
 	{
 		unset($_SESSION['adminlogged']);
+	}
+
+
+	//reset admin password
+	if(isset($_POST['reset_email_admin']) && ($_POST['reset_email_admin']!=''))
+	{
+		$db->where ("email", $_POST['reset_email_admin']);
+		$db->where ("(user_type = 3 OR user_type = 2)");
+		$user = $db->getOne ("users");
+		if($user['id']){
+			$new_pass = generate_token(6);
+			$hash_new_pass = hash_password($new_pass);
+
+			$pass_data = array(
+				'password' => $hash_new_pass
+			);
+			$db->where('id', $user['id']);
+			if($db->update('users', $pass_data)){
+				$reset_pass_mail_html = '<p>Dear Admin,</p>';
+				$reset_pass_mail_html .= '<p>Your password has been reset.Your new password is '.$new_pass.'. Please use your new password to login to admin panel</p>';
+				$reset_pass_mail_html .= '<p>Thanks<br/>Team Easy Park Now</p>';
+				send_mail($reset_pass_mail_html,$user['email'],'Admin Panel-Password Reset');
+			}			
+		}
 	}
 }else{ 
 	if(isset($_SESSION['adminlogged']) && ($_SESSION['adminlogged']!=''))
@@ -82,7 +107,7 @@ if(isset($_POST['csrf_protect_token']) && ($_POST['csrf_protect_token'] == $_SES
 		<div class="row">
 			<div class="col-md-4 col-md-offset-4">
 				<div class="login-wrapper">
-			        <div class="box">
+			        <div class="box" id="already_show">
 			            <div class="content-wrap">
 			                <h6>Sign In</h6>
 							<form action="" method="post" >
@@ -95,6 +120,22 @@ if(isset($_POST['csrf_protect_token']) && ($_POST['csrf_protect_token'] == $_SES
 							</form>
 			            </div>
 			        </div>
+			        <div class="already">
+			            <p>Forgot Password?</p><a id="ac_link" href="Javascript:void(0)" onclick="$('#already_show').toggle('slow'); $('#inpt_email').toggle('slow'); $('div.already').toggle('slow');">Click here to reset</a>
+			        </div>
+			        <div class="box" id="inpt_email">
+			            <div class="content-wrap">
+			            	<h6>Reset Password</h6>
+			            	<form action="" method="post" >
+			            		<input class="form-control" name="reset_email_admin" type="email" placeholder="Email Id" required>
+			            		<input type="hidden" name="csrf_protect_token" value="<?php echo $_SESSION['crsf_protect_token']; ?>" />
+			            		<div class="action">
+			                    	<input type="submit" class="btn btn-primary" name="admin_login" value="Send Password" />
+			                    	<input onclick="$('#already_show').toggle('slow'); $('#inpt_email').toggle('slow'); $('div.already').toggle('slow');" type="button" class="btn btn-default" value="Cancel" />
+			                	</div>
+			            	</form>
+			            </div>
+			        </div>
 			    </div>
 			</div>
 		</div>
@@ -104,5 +145,10 @@ if(isset($_POST['csrf_protect_token']) && ($_POST['csrf_protect_token'] == $_SES
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <script src="js/custom.js"></script>
+    <script type="text/javascript">
+    	$(document).ready(function(){ 
+    		$('#inpt_email').hide();
+    	});
+    </script>
   </body>
 </html>

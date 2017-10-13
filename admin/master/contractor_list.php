@@ -18,6 +18,7 @@
 			//delete active transactions
 			$active_trans = check_active_transaction($db_contractor_list,'parking_id',(int)$_REQUEST['id']);
 			if($active_trans){
+
 				//delete slots
 				$db_contractor_list->where('user_id',(int)$_REQUEST['id']);
 				$db_contractor_list->delete('tbl_parking_slots');
@@ -62,30 +63,43 @@
 		unset($_SESSION['csrf_token_contractor']);
 		$_SESSION['csrf_token_contractor'] = $csrf_token;
 	}
-
 ?>
-<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="contractor_table">
-	<thead>
-		<tr>
-			<th>Sr.No</th>
-			<th>Username</th>
-			<th>Parking Name</th>
-			<th>Location Alloted</th>
-			<th>Actions</th>
-		</tr>
-	</thead>
-	<tbody>
-		<?php foreach($contractor_list as $contractor): ?>
-		<tr>
-			<td><?=$count_sr?></td>
-			<td><?=$contractor['username']?></td>
-			<td><?=$contractor['contractor_name']?></td>
-			<td><?=$contractor['contractor_location']?></td>
-			<td>
-			<a href="index.php?page=contractor_edit&id=<?=$contractor['id']?>&token=<?=urlencode($csrf_token)?>"><span class="glyphicon glyphicon-pencil"></span></a> | 
-			<a href="index.php?page=contractor_list&id=<?=$contractor['id']?>&token=<?=urlencode($csrf_token)?>" onclick="confirm('Are you sure you want to delete this data?')"><span class="glyphicon glyphicon-trash"></span></a>
-			</td>
-		</tr>
-		<?php $count_sr++; endforeach; ?>
-	</tbody>
-</table>
+<div class="content-box-header">
+	<div class="panel-title">Parking Accounts</div>
+
+	<div class="panel-options">
+		<a href="index.php?page=contractor_new" data-rel="collapse"><i class="glyphicon glyphicon-plus-sign"></i></a>
+	</div>
+</div>
+<div class="content-box-large box-with-header">
+	<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="contractor_table">
+		<thead>
+			<tr>
+				<th>Sr.No</th>
+				<th>Username</th>
+				<th>Parking Name</th>
+				<th>Location Alloted</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php foreach($contractor_list as $contractor): ?>
+			<tr>
+				<td><?=$count_sr?></td>
+				<td><?=$contractor['username']?></td>
+				<td><?=$contractor['contractor_name']?></td>
+				<td><?=$contractor['contractor_location']?></td>
+				<td>
+				<a href="index.php?page=contractor_edit&id=<?=$contractor['id']?>&token=<?=urlencode($csrf_token)?>"><span class="glyphicon glyphicon-pencil"></span></a> | 
+				<a <?php if(check_active_transaction($db_contractor_list,'parking_id',(int)$contractor['id'])){ ?> 
+				href="index.php?page=contractor_list&id=<?=$contractor['id']?>&token=<?=urlencode($csrf_token)?>" onclick="return confirm('Are you sure you want to delete this data?')"
+				<?php }else{ ?> 
+				href="#" onclick="alert('This data cannot be deleted right now.'); return false;"
+				<?php } ?>
+				><span class="glyphicon glyphicon-trash"></span></a>
+				</td>
+			</tr>
+			<?php $count_sr++; endforeach; ?>
+		</tbody>
+	</table>
+</div>

@@ -1,1 +1,5 @@
-Sr.No,Parking Slot No,Vehicle Plate No,Start Date,Start Time,End Date,End Time,Amount Paid,
+Sr.No,Parking Slot No,Vehicle Plate No,Start Date,Start Time,End Date,End Time,Admin Share,Town Share,
+"1","8988","456789","2017-10-07","16:07","2017-10-07","18:27","840","1.4",
+"2","6480","456789","2017-10-07","16:43","2017-10-07","17:33","300","0.5",
+"3","8988","147852","2017-10-09","10:19","2017-10-09","11:29","420","0.7",
+"4","6480","123456","2017-10-09","10:26","2017-10-09","10:46","120","0.2",
